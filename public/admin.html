@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Kedai Dimesem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar {
+            width: 260px;
+            transition: all 0.3s;
+        }
+        .main-content {
+            margin-left: 260px;
+            transition: all 0.3s;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -260px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        /* Warna Palette Coklat */
+        .bg-brown-50 { background-color: #fdf8f3; }
+        .bg-brown-100 { background-color: #faeddd; }
+        .bg-brown-200 { background-color: #f2d9bb; }
+        .bg-brown-300 { background-color: #e6c198; }
+        .bg-brown-400 { background-color: #d9a875; }
+        .bg-brown-500 { background-color: #c18a52; }
+        .bg-brown-600 { background-color: #a16a3a; }
+        .bg-brown-700 { background-color: #82512a; }
+        .bg-brown-800 { background-color: #643c1d; }
+        .bg-brown-900 { background-color: #4a2d00; }
+        
+        .text-brown-50 { color: #fdf8f3; }
+        .text-brown-100 { color: #faeddd; }
+        .text-brown-200 { color: #f2d9bb; }
+        .text-brown-300 { color: #e6c198; }
+        .text-brown-400 { color: #d9a875; }
+        .text-brown-500 { color: #c18a52; }
+        .text-brown-600 { color: #a16a3a; }
+        .text-brown-700 { color: #82512a; }
+        .text-brown-800 { color: #643c1d; }
+        .text-brown-900 { color: #4a2d00; }
+        
+        .border-brown-200 { border-color: #f2d9bb; }
+        .border-brown-300 { border-color: #e6c198; }
+        .border-brown-500 { border-color: #c18a52; }
+        .border-brown-600 { border-color: #a16a3a; }
+        .border-brown-700 { border-color: #82512a; }
+        .border-brown-800 { border-color: #643c1d; }
+        
+        .hover\:bg-brown-600:hover { background-color: #a16a3a; }
+        .hover\:bg-brown-700:hover { background-color: #82512a; }
+        .hover\:text-brown-600:hover { color: #a16a3a; }
+        .hover\:text-brown-700:hover { color: #82512a; }
+        .hover\:border-brown-500:hover { border-color: #c18a52; }
+    </style>
+</head>
+<body class="bg-brown-50">
+    <!-- Sidebar -->
+    <div class="sidebar fixed h-screen bg-brown-900 text-white">
+        <!-- Logo -->
+        <div class="p-6 border-b border-brown-800">
+            <h1 class="text-2xl font-bold text-brown-300">
+                <i class="fas fa-utensils mr-2"></i>Kedai Dimesem
+            </h1>
+            <p class="text-brown-300 text-sm mt-1">Admin Panel</p>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="p-4">
+            <ul class="space-y-2">
+                <li>
+                    <a href="#dashboard" class="nav-link flex items-center p-3 rounded-lg bg-brown-700">
+                        <i class="fas fa-tachometer-alt mr-3"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#products" class="nav-link flex items-center p-3 rounded-lg hover:bg-brown-800">
+                        <i class="fas fa-utensils mr-3"></i>
+                        <span>Produk</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#transactions" class="nav-link flex items-center p-3 rounded-lg hover:bg-brown-800">
+                        <i class="fas fa-receipt mr-3"></i>
+                        <span>Transaksi</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#users" class="nav-link flex items-center p-3 rounded-lg hover:bg-brown-800">
+                        <i class="fas fa-users mr-3"></i>
+                        <span>Pengguna</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#reports" class="nav-link flex items-center p-3 rounded-lg hover:bg-brown-800">
+                        <i class="fas fa-chart-bar mr-3"></i>
+                        <span>Laporan</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="mt-8 pt-8 border-t border-brown-800">
+                <a href="dashboard.html" class="flex items-center p-3 rounded-lg hover:bg-brown-800">
+                    <i class="fas fa-store mr-3"></i>
+                    <span>Kembali ke Toko</span>
+                </a>
+                <button id="logoutBtn" class="w-full flex items-center p-3 rounded-lg hover:bg-brown-800 mt-2">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content min-h-screen">
+        <!-- Top Bar -->
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <button id="menuToggle" class="md:hidden text-brown-600 mr-4">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h2 id="pageTitle" class="text-xl font-semibold text-brown-900">Dashboard Admin</h2>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="notifBtn" class="text-brown-600 hover:text-brown-700 relative">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-brown-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    </button>
+                </div>
+                <div class="flex items-center">
+                    <img src="https://ui-avatars.com/api/?name=Admin+Kedai&background=c18a52&color=fff" 
+                         alt="Admin" 
+                         class="w-10 h-10 rounded-full">
+                    <div class="ml-3">
+                        <p class="font-medium text-brown-900" id="adminName">Admin Kedai</p>
+                        <p class="text-sm text-brown-600">Administrator</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <main class="p-6">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-md p-6 border border-brown-200">
+                        <div class="flex items-center">
+                            <div class="bg-brown-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-shopping-cart text-brown-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-brown-600">Total Transaksi</p>
+                                <h3 class="text-2xl font-bold text-brown-900" id="totalTransactions">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md p-6 border border-brown-200">
+                        <div class="flex items-center">
+                            <div class="bg-brown-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-coins text-brown-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-brown-600">Pendapatan</p>
+                                <h3 class="text-2xl font-bold text-brown-900" id="totalRevenue">Rp 0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md p-6 border border-brown-200">
+                        <div class="flex items-center">
+                            <div class="bg-brown-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-utensils text-brown-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-brown-600">Total Produk</p>
+                                <h3 class="text-2xl font-bold text-brown-900" id="totalProducts">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md p-6 border border-brown-200">
+                        <div class="flex items-center">
+                            <div class="bg-brown-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-users text-brown-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-brown-600">Total Pengguna</p>
+                                <h3 class="text-2xl font-bold text-brown-900" id="totalUsers">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Transactions -->
+                <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-brown-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold text-brown-900">Transaksi Terbaru</h3>
+                        <a href="#transactions" class="text-brown-600 hover:text-brown-700 text-sm font-medium">
+                            Lihat Semua <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-brown-200">
+                                    <th class="text-left py-3 px-4 text-brown-800">ID Transaksi</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Nama</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Tanggal</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Total</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentTransactions">
+                                <!-- Will be populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Products Section -->
+            <section id="products" class="content-section hidden">
+                <div class="bg-white rounded-xl shadow-md p-6 border border-brown-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-brown-900">Manajemen Produk</h3>
+                        <button id="addProductBtn" class="bg-brown-600 hover:bg-brown-700 text-white px-4 py-2 rounded-lg transition">
+                            <i class="fas fa-plus mr-2"></i>Tambah Produk
+                        </button>
+                    </div>
+                    
+                    <!-- Product Filters -->
+                    <div class="flex flex-wrap gap-4 mb-6">
+                        <input type="text" id="productSearch" placeholder="Cari produk..." 
+                               class="flex-grow max-w-md px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                        <select id="categoryFilter" class="px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                            <option value="">Semua Kategori</option>
+                            <option value="dimsum">Dimsum</option>
+                            <option value="minuman">Minuman</option>
+                            <option value="lauk">Frozen</option>
+                        </select>
+                        <select id="statusFilter" class="px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                            <option value="">Semua Status</option>
+                            <option value="active">Aktif</option>
+                            <option value="inactive">Non-Aktif</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Products Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-brown-200">
+                                    <th class="text-left py-3 px-4 text-brown-800">Gambar</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Nama Produk</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Kategori</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Harga</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Status</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTable">
+                                <!-- Will be populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Transactions Section -->
+            <section id="transactions" class="content-section hidden">
+                <div class="bg-white rounded-xl shadow-md p-6 border border-brown-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-brown-900">Manajemen Transaksi</h3>
+                        <div class="flex gap-4">
+                            <input type="date" id="dateFrom" class="px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                            <input type="date" id="dateTo" class="px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                            <button id="filterTransactions" class="bg-brown-600 hover:bg-brown-700 text-white px-4 py-2 rounded-lg transition">
+                                <i class="fas fa-filter mr-2"></i>Filter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Transactions Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-brown-200">
+                                    <th class="text-left py-3 px-4 text-brown-800">ID</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Nama Pelanggan</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Tanggal</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Metode</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Total</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Status</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTable">
+                                <!-- Will be populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Users Section -->
+            <section id="users" class="content-section hidden">
+                <div class="bg-white rounded-xl shadow-md p-6 border border-brown-200">
+                    <h3 class="text-xl font-semibold mb-6 text-brown-900">Manajemen Pengguna</h3>
+                    
+                    <!-- Users Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-brown-200">
+                                    <th class="text-left py-3 px-4 text-brown-800">Nama</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Email</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Role</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Tanggal Daftar</th>
+                                    <th class="text-left py-3 px-4 text-brown-800">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTable">
+                                <!-- Will be populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Reports Section -->
+            <section id="reports" class="content-section hidden">
+                <div class="bg-white rounded-xl shadow-md p-6 border border-brown-200">
+                    <h3 class="text-xl font-semibold mb-6 text-brown-900">Laporan</h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Report Filters -->
+                        <div>
+                            <div class="mb-6">
+                                <label class="block text-brown-700 mb-2">Pilih Periode</label>
+                                <div class="flex gap-4">
+                                    <select id="reportPeriod" class="flex-grow px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                                        <option value="today">Hari Ini</option>
+                                        <option value="week">Minggu Ini</option>
+                                        <option value="month">Bulan Ini</option>
+                                        <option value="year">Tahun Ini</option>
+                                        <option value="custom">Kustom</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div id="customDateRange" class="hidden mb-6">
+                                <label class="block text-brown-700 mb-2">Rentang Tanggal</label>
+                                <div class="flex gap-4">
+                                    <input type="date" id="reportDateFrom" class="flex-grow px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                                    <input type="date" id="reportDateTo" class="flex-grow px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-brown-700 mb-2">Jenis Laporan</label>
+                                <select id="reportType" class="w-full px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                                    <option value="sales">Laporan Penjualan</option>
+                                    <option value="products">Laporan Produk</option>
+                                    <option value="transactions">Laporan Transaksi</option>
+                                </select>
+                            </div>
+                            
+                            <button id="generateReport" class="w-full bg-brown-600 hover:bg-brown-700 text-white px-4 py-3 rounded-lg font-semibold transition">
+                                <i class="fas fa-download mr-2"></i>Generate Laporan
+                            </button>
+                        </div>
+                        
+                        <!-- Report Preview -->
+                        <div>
+                            <div class="bg-brown-50 rounded-lg p-6 h-full flex flex-col items-center justify-center border-2 border-dashed border-brown-200">
+                                <i class="fas fa-chart-line text-5xl text-brown-300 mb-4"></i>
+                                <p class="text-brown-500 text-center">Pilih filter dan generate laporan untuk melihat preview</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Product Modal -->
+    <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-brown-200">
+                <div class="p-6">
+                    <!-- Modal content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+    
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+        
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update active link
+                document.querySelectorAll('.nav-link').forEach(l => {
+                    l.classList.remove('bg-brown-700');
+                    l.classList.add('hover:bg-brown-800');
+                });
+                this.classList.remove('hover:bg-brown-800');
+                this.classList.add('bg-brown-700');
+                
+                // Show corresponding section
+                const target = this.getAttribute('href').substring(1);
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                document.getElementById(target).classList.remove('hidden');
+                
+                // Update page title
+                document.getElementById('pageTitle').textContent = 
+                    this.querySelector('span').textContent;
+                
+                // Close mobile menu
+                if (window.innerWidth < 768) {
+                    document.querySelector('.sidebar').classList.remove('active');
+                }
+                
+                // Load section data
+                loadSectionData(target);
+            });
+        });
+        
+        // Load admin name
+        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+        if (user && user.name) {
+            document.getElementById('adminName').textContent = user.name;
+        } else {
+            // Redirect to login if not admin
+            window.location.href = 'login.html';
+        }
+        
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            sessionStorage.removeItem('user');
+            fetch('/api/logout', {
+                method: 'POST',
+                credentials: 'include'
+            }).then(() => {
+                window.location.href = 'login.html';
+            });
+        });
+        
+        // Add product button
+        document.getElementById('addProductBtn').addEventListener('click', function() {
+            showProductModal();
+        });
+        
+        // Report period toggle
+        document.getElementById('reportPeriod').addEventListener('change', function() {
+            const customRange = document.getElementById('customDateRange');
+            customRange.classList.toggle('hidden', this.value !== 'custom');
+        });
+        
+        // Initial load
+        loadSectionData('dashboard');
+        
+        function loadSectionData(section) {
+            switch(section) {
+                case 'dashboard':
+                    loadDashboardStats();
+                    loadRecentTransactions();
+                    break;
+                case 'products':
+                    loadProducts();
+                    break;
+                case 'transactions':
+                    loadTransactions();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+            }
+        }
+        
+async function loadDashboardStats() {
+    try {
+        const response = await fetch('/api/admin/stats', {
+            credentials: 'include' // PENTING agar session cookie terkirim
+        }); 
+        if (!response.ok) throw new Error('Gagal mengambil data');
+        
+        const stats = await response.json();
+
+        // Update UI - Gunakan nama variabel sesuai backend (snake_case)
+        if (document.getElementById('totalTransactions')) {
+            document.getElementById('totalTransactions').textContent = stats.total_transactions;
+        }
+        if (document.getElementById('totalRevenue')) {
+            document.getElementById('totalRevenue').textContent = `Rp ${stats.total_revenue.toLocaleString('id-ID')}`;
+        }
+        if (document.getElementById('totalProducts')) {
+            document.getElementById('totalProducts').textContent = stats.total_products;
+        }
+        if (document.getElementById('totalUsers')) {
+            document.getElementById('totalUsers').textContent = stats.total_users;
+        }
+    } catch (error) {
+        console.error('Error loading dashboard stats:', error);
+    }
+}
+        
+async function loadRecentTransactions() {
+    try {
+        const response = await fetch('/api/admin/recent-transactions');
+        const transactions = await response.json();
+
+        const tableBody = document.getElementById('recentTransactions');
+        if (!tableBody) return;
+
+        tableBody.innerHTML = ''; // Hapus teks "Gagal memuat" atau data lama
+
+        if (transactions.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-brown-500">Belum ada transaksi terbaru</td></tr>';
+            return;
+        }
+
+        transactions.forEach(t => {
+            // Tentukan warna status berdasarkan database
+            const statusClass = t.status === 'paid' ? 'bg-green-100 text-green-700' : 
+                                t.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 
+                                'bg-red-100 text-red-700';
+
+            const row = `
+                <tr class="border-b border-brown-100 hover:bg-brown-50 transition">
+                    <td class="py-3 px-4 font-medium text-brown-900">${t.transaction_code}</td>
+                    <td class="py-3 px-4 text-brown-700">${t.customer_name}</td>
+                    <td class="py-3 px-4 text-brown-700">${new Date(t.created_at).toLocaleDateString('id-ID')}</td>
+                    <td class="py-3 px-4 font-medium text-brown-900">Rp ${t.total_amount.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
+                            ${t.status.toUpperCase()}
+                        </span>
+                    </td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML('beforeend', row);
+        });
+    } catch (error) {
+        console.error('Error loading recent transactions:', error);
+        const tableBody = document.getElementById('recentTransactions');
+        if (tableBody) tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-red-500">Gagal memuat data transaksi</td></tr>';
+    }
+}
+        
+        function formatCurrency(amount) {
+            return 'Rp ' + amount.toLocaleString('id-ID');
+        }
+        
+        function showProductModal(product = null) {
+            const modal = document.getElementById('productModal');
+            const modalContent = modal.querySelector('.p-6');
+            
+            const isEdit = product !== null;
+            
+            modalContent.innerHTML = `
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-semibold text-brown-900">${isEdit ? 'Edit Produk' : 'Tambah Produk Baru'}</h3>
+                    <button onclick="closeModal()" class="text-brown-600 hover:text-brown-800">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="productForm" enctype="multipart/form-data">
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-brown-700 mb-2">Nama Produk *</label>
+                                <input type="text" name="name" required 
+                                       value="${product ? product.name : ''}"
+                                       class="w-full px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-brown-700 mb-2">Harga *</label>
+                                <input type="number" name="price" required min="0" step="1000"
+                                       value="${product ? product.price : ''}"
+                                       class="w-full px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-brown-700 mb-2">Deskripsi</label>
+                            <textarea name="description" rows="3"
+                                class="w-full px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">${product ? product.description : ''}</textarea>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-brown-700 mb-2">Kategori</label>
+                                <select name="category" class="w-full px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                                    <option value="dimsum" ${product && product.category === 'dimsum' ? 'selected' : ''}>Dimsum</option>
+                                    <option value="minuman" ${product && product.category === 'minuman' ? 'selected' : ''}>Minuman</option>
+                                    <option value="lauk" ${product && product.category === 'lauk' ? 'selected' : ''}>Lauk</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-brown-700 mb-2">Status</label>
+                                <select name="is_active" class="w-full px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                                    <option value="1" ${product && product.is_active ? 'selected' : ''}>Aktif</option>
+                                    <option value="0" ${product && !product.is_active ? 'selected' : ''}>Non-Aktif</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-brown-700 mb-2">Gambar Produk</label>
+                            <input type="file" name="image" accept="image/*" 
+                                   class="w-full px-4 py-2 border border-brown-300 rounded-lg focus:border-brown-500 focus:ring-brown-500">
+                            ${product && product.image ? `
+                                <div class="mt-2">
+                                    <p class="text-sm text-brown-600 mb-1">Gambar saat ini:</p>
+                                    <img src="${product.image}" alt="${product.name}" class="w-32 h-32 object-cover rounded-lg border border-brown-200">
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4 mt-8">
+                        <button type="button" onclick="closeModal()" 
+                                class="px-6 py-2 border border-brown-300 rounded-lg hover:bg-brown-50 text-brown-700">
+                            Batal
+                        </button>
+                        <button type="submit" 
+                                class="bg-brown-600 hover:bg-brown-700 text-white px-6 py-2 rounded-lg transition">
+                            ${isEdit ? 'Update Produk' : 'Simpan Produk'}
+                        </button>
+                    </div>
+                </form>
+            `;
+            
+            modal.classList.remove('hidden');
+            
+            // Handle form submission
+            document.getElementById('productForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                try {
+                    const url = isEdit ? `/api/products/${product.id}` : '/api/products';
+                    const method = isEdit ? 'PUT' : 'POST';
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        showNotification(`Produk berhasil ${isEdit ? 'diupdate' : 'ditambahkan'}!`, 'success');
+                        closeModal();
+                        loadProducts();
+                    } else {
+                        throw new Error('Failed to save product');
+                    }
+                } catch (error) {
+                    showNotification('Gagal menyimpan produk', 'error');
+                    console.error('Error saving product:', error);
+                }
+            });
+        }
+        
+        function closeModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+        
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'}`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

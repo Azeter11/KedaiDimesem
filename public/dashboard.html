@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kedai Dimesem - Dimsum Lezat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles dengan palette coklat */
+        .hero-bg {
+            background: linear-gradient(rgba(74, 45, 0, 0.8), rgba(74, 45, 0, 0.7)), url('https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(120, 71, 6, 0.15);
+        }
+        
+        /* Warna utama coklat */
+        .bg-brown-50 { background-color: #fdf8f3; }
+        .bg-brown-100 { background-color: #faeddd; }
+        .bg-brown-200 { background-color: #f2d9bb; }
+        .bg-brown-300 { background-color: #e6c198; }
+        .bg-brown-400 { background-color: #d9a875; }
+        .bg-brown-500 { background-color: #c18a52; }
+        .bg-brown-600 { background-color: #a16a3a; }
+        .bg-brown-700 { background-color: #82512a; }
+        .bg-brown-800 { background-color: #643c1d; }
+        .bg-brown-900 { background-color: #4a2d00; }
+        
+        .text-brown-50 { color: #fdf8f3; }
+        .text-brown-100 { color: #faeddd; }
+        .text-brown-200 { color: #f2d9bb; }
+        .text-brown-300 { color: #e6c198; }
+        .text-brown-400 { color: #d9a875; }
+        .text-brown-500 { color: #c18a52; }
+        .text-brown-600 { color: #a16a3a; }
+        .text-brown-700 { color: #82512a; }
+        .text-brown-800 { color: #643c1d; }
+        .text-brown-900 { color: #4a2d00; }
+        
+        .border-brown-500 { border-color: #c18a52; }
+        .hover\:border-brown-600:hover { border-color: #a16a3a; }
+    </style>
+</head>
+<body class="bg-brown-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="dashboard.html" class="text-2xl font-bold text-brown-700">
+                        <i class="fas fa-utensils mr-2 text-brown-600"></i>KedaiDimesemi.
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="dashboard.html" class="nav-link font-semibold hover:text-brown-800">
+                        <i class="fas fa-home mr-1"></i>Home
+                    </a>
+                    <a href="#about" class="nav-link hover:text-brown-600">
+                        <i class="fas fa-info-circle mr-1"></i>Tentang Kami
+                    </a>
+                    <a href="#products" class="nav-link hover:text-brown-600">
+                        <i class="fas fa-utensils mr-1"></i>Menu
+                    </a>
+                    <a href="#products" class="nav-link hover:text-brown-600">
+                        <i class="fas fa-store mr-1"></i>Produk
+                    </a>
+                    <a href="#contact" class="nav-link hover:text-brown-600">
+                        <i class="fas fa-phone mr-1"></i>Kontak
+                    </a>
+                </div>
+                
+                <!-- User Actions -->
+                <div class="flex items-center space-x-4">
+                    <a href="#" id="cartButton" class="relative text-gray-700 hover:text-brown-600">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span id="cartCount" class="absolute -top-2 -right-2 bg-brown-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                    </a>
+                    
+                    <div id="userSection" class="hidden md:flex items-center space-x-3">
+                        <div id="userName" class="text-gray-700 font-medium"></div>
+                        <button id="logoutBtn" class="bg-brown-600 text-white px-4 py-2 rounded-lg hover:bg-brown-700 transition">
+                            <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                        </button>
+                    </div>
+                    
+                    <div id="guestSection" class="flex items-center space-x-3">
+                        <a href="login.html" class="text-gray-700 hover:text-brown-600">Login</a>
+                        <a href="register.html" class="bg-brown-600 text-white px-4 py-2 rounded-lg hover:bg-brown-700 transition">
+                            Daftar
+                        </a>
+                    </div>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button id="mobileMenuButton" class="md:hidden text-gray-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden py-4 border-t">
+                <div class="flex flex-col space-y-4">
+                    <a href="dashboard.html" class="text-brown-700 font-semibold">Home</a>
+                    <a href="#about" class="text-gray-700">Tentang Kami</a>
+                    <a href="#products" class="text-gray-700">Menu</a>
+                    <a href="#products" class="text-gray-700">Produk</a>
+                    <a href="#contact" class="text-gray-700">Kontak</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+<section id="heroSection" class="text-white py-20 transition-all duration-1000 ease-in-out hero-bg">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6">Datang Lapar, Pulang Kenyang</h1>
+        <p class="text-xl mb-8 max-w-2xl mx-auto">
+            Kami menyajikan dimsum lezat dari bahan berkualitas dengan rasa terbaik untuk mu.
+        </p>
+        <div class="flex flex-col md:flex-row gap-4 justify-center">
+            <a href="#products" class="bg-brown-600 hover:bg-brown-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition transform hover:-translate-y-1">
+                <i class="fas fa-shopping-bag mr-2"></i>Pesan Sekarang
+            </a>
+            <a href="#about" class="bg-white hover:bg-brown-50 text-brown-700 px-8 py-3 rounded-lg text-lg font-semibold transition transform hover:-translate-y-1">
+                <i class="fas fa-play-circle mr-2"></i>Tentang Kami
+            </a>
+        </div>
+    </div>
+</section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-16 bg-brown-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-brown-900 mb-4">Menu Dimsum Kami</h2>
+                <p class="text-brown-700 max-w-2xl mx-auto">
+                    Pilihan dimsum terbaik dengan bahan-bahan segar dan berkualitas tinggi.
+                </p>
+            </div>
+
+            <!-- Filter Categories -->
+            <div class="flex flex-wrap justify-center gap-2 mb-8">
+                <button class="category-btn px-4 py-2 bg-brown-600 text-white rounded-lg" data-category="all">
+                    Semua
+                </button>
+                <button class="category-btn px-4 py-2 bg-brown-200 text-brown-800 rounded-lg hover:bg-brown-300" data-category="dimsum">
+                    Dimsum
+                </button>
+                <button class="category-btn px-4 py-2 bg-brown-200 text-brown-800 rounded-lg hover:bg-brown-300" data-category="minuman">
+                    Minuman
+                </button>
+                <button class="category-btn px-4 py-2 bg-brown-200 text-brown-800 rounded-lg hover:bg-brown-300" data-category="lauk">
+                    Frozen
+                </button>
+            </div>
+            
+            <!-- Products Grid -->
+            <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Products will be loaded dynamically -->
+                <div class="text-center py-12">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brown-600 mx-auto"></div>
+                    <p class="mt-4 text-brown-700">Memuat produk...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                         alt="Tentang Kedai Dimesem" 
+                         class="rounded-2xl shadow-lg">
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl font-bold text-brown-900 mb-6">Tentang Kedai Dimesem</h2>
+                    <p class="text-brown-700 mb-6">
+                        Sejak 2020, Kedai Dimesem telah berkomitmen untuk menyajikan dimsum terbaik dengan cita rasa autentik. 
+                        Kami menggunakan bahan-bahan pilihan dan resep rahasia yang telah turun-temurun.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="flex items-center">
+                            <div class="bg-brown-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-leaf text-brown-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-brown-800">Bahan Segar</h4>
+                                <p class="text-sm text-brown-600">100% bahan premium</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="bg-brown-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-award text-brown-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-brown-800">Terpercaya</h4>
+                                <p class="text-sm text-brown-600">+1000 pelanggan</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#contact" class="inline-flex items-center text-brown-700 font-semibold hover:text-brown-800">
+                        Hubungi Kami <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+<section id="contact" class="py-16 bg-brown-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-brown-900 mb-4">Hubungi Kami</h2>
+            <p class="text-brown-700">Pesan sekarang atau kunjungi kedai kami</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <a href="https://www.google.com/maps/search/?api=1&query=Jl.+Dimsum+Lezat+No.+123,+Jakarta" 
+               target="_blank" 
+               class="bg-white p-6 rounded-xl shadow-md text-center card-hover block hover:border-brown-500 border border-transparent transition-all">
+                <div class="bg-brown-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-map-marker-alt text-brown-600 text-xl"></i>
+                </div>
+                <h4 class="font-semibold mb-2 text-brown-900">Lokasi</h4>
+                <p class="text-brown-700">Jl. Dimsum Lezat No. 123, Jakarta</p>
+                <span class="text-xs text-brown-600 mt-2 block font-medium">Klik untuk navigasi <i class="fas fa-external-link-alt ml-1"></i></span>
+            </a>
+            
+            <a href="https://wa.me/62812345678" 
+               target="_blank"
+               class="bg-white p-6 rounded-xl shadow-md text-center card-hover block hover:border-brown-500 border border-transparent transition-all">
+                <div class="bg-brown-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-phone text-brown-600 text-xl"></i>
+                </div>
+                <h4 class="font-semibold mb-2 text-brown-900">Telepon / WhatsApp</h4>
+                <p class="text-brown-700">(021) 1234-5678</p>
+                <span class="text-xs text-green-600 mt-2 block font-medium">Klik untuk Chat WA <i class="fab fa-whatsapp ml-1"></i></span>
+            </a>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                <div class="bg-brown-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-clock text-brown-600 text-xl"></i>
+                </div>
+                <h4 class="font-semibold mb-2 text-brown-900">Jam Operasional</h4>
+                <p class="text-brown-700">09:00 - 21:00 WIB</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-2xl font-bold text-brown-300 mb-2">KeddaiDimesemi.</h3>
+                    <p class="text-brown-300">Dimsum lezat untuk setiap kesempatan</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="#" class="text-brown-300 hover:text-brown-100">
+                        <i class="fab fa-facebook text-xl"></i>
+                    </a>
+                    <a href="#" class="text-brown-300 hover:text-brown-100">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="#" class="text-brown-300 hover:text-brown-100">
+                        <i class="fab fa-whatsapp text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="border-t border-brown-800 mt-8 pt-8 text-center text-brown-300">
+                <p>&copy; 2025 Kedai Dimesem. Hak Cipta Dilindungi.</p>
+                <p>By RafiAma</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="fixed right-0 top-0 h-full w-full md:w-96 bg-white shadow-xl">
+            <div class="p-6 h-full flex flex-col">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-brown-900">
+                        <i class="fas fa-shopping-cart mr-2 text-brown-600"></i>Keranjang Belanja
+                    </h3>
+                    <button id="closeCart" class="text-brown-600 hover:text-brown-800">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Cart Items -->
+                <div id="cartItems" class="flex-grow overflow-y-auto mb-4">
+                    <div class="text-center py-8">
+                        <i class="fas fa-shopping-cart text-4xl text-brown-300 mb-4"></i>
+                        <p class="text-brown-600">Keranjang belanja kosong</p>
+                    </div>
+                </div>
+                
+                <!-- Cart Summary -->
+                <div class="border-t pt-4">
+                    <div class="flex justify-between mb-4">
+                        <span class="font-semibold text-brown-900">Total:</span>
+                        <span id="cartTotal" class="text-xl font-bold text-brown-700">Rp 0</span>
+                    </div>
+                    <button id="checkoutBtn" class="w-full bg-brown-600 text-white py-3 rounded-lg font-semibold hover:bg-brown-700 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i class="fas fa-credit-card mr-2"></i>Checkout
+                    </button>
+                    <a href="dashboard.html" class="block text-center mt-2 text-brown-600 hover:text-brown-800">
+                        Lanjutkan Belanja
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="cart.js"></script>
+
+    <script>
+        // Mobile Menu Toggle
+        document.getElementById('mobileMenuButton').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        });
+        
+        // Cart Modal
+        document.getElementById('cartButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('cartModal').classList.remove('hidden');
+            loadCart();
+        });
+        
+        document.getElementById('closeCart').addEventListener('click', function() {
+            document.getElementById('cartModal').classList.add('hidden');
+        });
+        
+        // Category Filter
+        document.querySelectorAll('.category-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.remove('bg-brown-600', 'text-white');
+                    btn.classList.add('bg-brown-200', 'text-brown-800');
+                });
+                this.classList.remove('bg-brown-200', 'text-brown-800');
+                this.classList.add('bg-brown-600', 'text-white');
+                
+                // Filter products
+                const category = this.dataset.category;
+                filterProducts(category);
+            });
+        });
+        
+        function filterProducts(category) {
+            const products = document.querySelectorAll('.product-card');
+            products.forEach(product => {
+                if (category === 'all' || product.dataset.category === category) {
+                    product.classList.remove('hidden');
+                } else {
+                    product.classList.add('hidden');
+                }
+            });
+        }
+        
+        // Load user info
+
+// Load user info & Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    // --- FITUR BARU: Navbar Menu Active State ---
+// Nav Active State Handler
+const navLinks = document.querySelectorAll('.nav-link');
+
+navLinks.forEach(link => {
+    link.addEventListener('click', function() {
+        // 1. Hapus status aktif dari SEMUA link (Desktop & Mobile)
+        navLinks.forEach(nav => {
+            nav.classList.remove('text-brown-700', 'font-semibold');
+            nav.classList.add('text-gray-700');
+        });
+
+        // 2. Tambahkan status aktif ke link yang sedang DIKLIK
+        this.classList.remove('text-gray-700');
+        this.classList.add('text-brown-700', 'font-semibold');
+
+        // 3. Khusus Mobile: Tutup menu setelah klik (Opsional)
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (!mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+        }
+    });
+});
+
+    // Cek User Session
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+    if (user && user.name) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userSection').classList.remove('hidden');
+        document.getElementById('guestSection').classList.add('hidden');
+        
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            sessionStorage.removeItem('user');
+            sessionStorage.removeItem('cart');
+            window.location.href = 'login.html';
+        });
+    }
+    
+    loadProducts();
+    updateCartCount();
+});
+        
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                const products = await response.json();
+                
+                const productsGrid = document.getElementById('productsGrid');
+                productsGrid.innerHTML = '';
+                
+                products.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'bg-white rounded-xl shadow-md overflow-hidden card-hover product-card';
+                    productCard.dataset.category = product.category || 'dimsum';
+                    
+                    productCard.innerHTML = `
+                        <div class="relative">
+                            <img src="${product.image || 'https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'}" 
+                                 alt="${product.name}" 
+                                 class="w-full h-48 object-cover">
+                            ${product.is_active === false ? 
+                                '<div class="absolute top-2 right-2 bg-brown-500 text-white px-3 py-1 rounded-full text-sm">Habis</div>' : ''}
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-2 text-brown-900">${product.name}</h3>
+                            <p class="text-brown-700 text-sm mb-3 line-clamp-2">${product.description || 'Dimsum lezat dengan bahan pilihan'}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xl font-bold text-brown-700">Rp ${product.price.toLocaleString('id-ID')}</span>
+                                <button onclick="addToCart(${product.id}, '${product.name}', ${product.price}, '${product.image}')" 
+                                        class="bg-brown-600 hover:bg-brown-700 text-white px-4 py-2 rounded-lg transition ${product.is_active === false ? 'opacity-50 cursor-not-allowed' : ''}"
+                                        ${product.is_active === false ? 'disabled' : ''}>
+                                    <i class="fas fa-cart-plus mr-1"></i>Tambah
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    productsGrid.appendChild(productCard);
+                });
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('productsGrid').innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-4xl text-brown-300 mb-4"></i>
+                        <p class="text-brown-700">Gagal memuat produk. Silakan refresh halaman.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function addToCart(productId, productName, price, image) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            
+            // Check if product already in cart
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+                existingItem.subtotal = existingItem.quantity * existingItem.price;
+            } else {
+                cart.push({
+                    id: productId,
+                    name: productName,
+                    price: price,
+                    image: image,
+                    quantity: 1,
+                    subtotal: price
+                });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            
+            // Show success notification
+            showNotification(`${productName} ditambahkan ke keranjang`, 'success');
+        }
+        
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const cartCount = document.getElementById('cartCount');
+            
+            if (cart.length > 0) {
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                cartCount.textContent = totalItems;
+                cartCount.classList.remove('hidden');
+            } else {
+                cartCount.classList.add('hidden');
+            }
+        }
+        
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-brown-100 text-brown-800 border border-brown-200'}`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        function loadCart() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const cartItems = document.getElementById('cartItems');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-shopping-cart text-4xl text-brown-300 mb-4"></i>
+                        <p class="text-brown-600">Keranjang belanja kosong</p>
+                    </div>
+                `;
+                checkoutBtn.disabled = true;
+                document.getElementById('cartTotal').textContent = 'Rp 0';
+                return;
+            }
+            
+            let html = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                total += item.subtotal;
+                html += `
+                    <div class="flex items-center border-b py-4">
+                        <img src="${item.image || 'https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80'}" 
+                             alt="${item.name}" 
+                             class="w-16 h-16 object-cover rounded-lg">
+                        <div class="ml-4 flex-grow">
+                            <h4 class="font-semibold text-brown-900">${item.name}</h4>
+                            <p class="text-brown-700 font-bold">Rp ${item.price.toLocaleString('id-ID')}</p>
+                        </div>
+                        <div class="flex items-center">
+                            <button onclick="updateQuantity(${index}, -1)" class="bg-brown-200 w-8 h-8 rounded-l-lg text-brown-700 hover:bg-brown-300">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <span class="bg-brown-50 w-10 h-8 flex items-center justify-center text-brown-800">${item.quantity}</span>
+                            <button onclick="updateQuantity(${index}, 1)" class="bg-brown-200 w-8 h-8 rounded-r-lg text-brown-700 hover:bg-brown-300">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button onclick="removeFromCart(${index})" class="ml-4 text-brown-600 hover:text-brown-800">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartItems.innerHTML = html;
+            document.getElementById('cartTotal').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+            checkoutBtn.disabled = false;
+            
+            // Add checkout event
+            checkoutBtn.onclick = function() {
+                const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+                if (!user.id) {
+                    showNotification('Silakan login terlebih dahulu', 'error');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                window.location.href = 'payment.html';
+            };
+        }
+        
+        function updateQuantity(index, change) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            cart[index].quantity += change;
+            
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            } else {
+                cart[index].subtotal = cart[index].quantity * cart[index].price;
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+            updateCartCount();
+        }
+        
+        function removeFromCart(index) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+            updateCartCount();
+            showNotification('Produk dihapus dari keranjang', 'success');
+        }
+
+        // Konfigurasi Slider Background
+const images = [
+    'https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80',
+    'https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80',
+    'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80'
+];
+
+let currentIndex = 0;
+const heroSection = document.getElementById('heroSection');
+
+function changeBackground() {
+    currentIndex = (currentIndex + 1) % images.length;
+    
+    // Mengubah background dengan smooth transition
+    heroSection.style.backgroundImage = `linear-gradient(rgba(74, 45, 0, 0.8), rgba(74, 45, 0, 0.7)), url('${images[currentIndex]}')`;
+}
+
+// Jalankan interval setiap 3000ms (3 detik)
+setInterval(changeBackground, 3000);
+    </script>
+</body>
+</html>

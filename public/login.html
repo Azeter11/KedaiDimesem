@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Kedai Dimesem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Background dengan nuansa coklat */
+        body {
+            background: linear-gradient(135deg, #fdf8f3 0%, #faeddd 100%);
+            min-height: 100vh;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #f2d9bb;
+            box-shadow: 0 10px 25px rgba(160, 106, 58, 0.1);
+        }
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(193, 138, 82, 0.2);
+        }
+        
+        /* Warna Palette Coklat */
+        .bg-brown-50 { background-color: #fdf8f3; }
+        .bg-brown-100 { background-color: #faeddd; }
+        .bg-brown-200 { background-color: #f2d9bb; }
+        .bg-brown-300 { background-color: #e6c198; }
+        .bg-brown-400 { background-color: #d9a875; }
+        .bg-brown-500 { background-color: #c18a52; }
+        .bg-brown-600 { background-color: #a16a3a; }
+        .bg-brown-700 { background-color: #82512a; }
+        .bg-brown-800 { background-color: #643c1d; }
+        .bg-brown-900 { background-color: #4a2d00; }
+        
+        .text-brown-50 { color: #fdf8f3; }
+        .text-brown-100 { color: #faeddd; }
+        .text-brown-200 { color: #f2d9bb; }
+        .text-brown-300 { color: #e6c198; }
+        .text-brown-400 { color: #d9a875; }
+        .text-brown-500 { color: #c18a52; }
+        .text-brown-600 { color: #a16a3a; }
+        .text-brown-700 { color: #82512a; }
+        .text-brown-800 { color: #643c1d; }
+        .text-brown-900 { color: #4a2d00; }
+        
+        .border-brown-200 { border-color: #f2d9bb; }
+        .border-brown-300 { border-color: #e6c198; }
+        .border-brown-500 { border-color: #c18a52; }
+        .border-brown-600 { border-color: #a16a3a; }
+        
+        .hover\:bg-brown-600:hover { background-color: #a16a3a; }
+        .hover\:bg-brown-700:hover { background-color: #82512a; }
+        .hover\:text-brown-600:hover { color: #a16a3a; }
+        .hover\:text-brown-700:hover { color: #82512a; }
+        .hover\:border-brown-500:hover { border-color: #c18a52; }
+        
+        /* Animasi untuk card */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-card {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="login-card rounded-2xl w-full max-w-md p-8">
+        <!-- Logo/Header -->
+        <div class="text-center mb-8">
+            <div class="mb-4">
+                <i class="fas fa-utensils text-4xl text-brown-600 mb-2"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-brown-800 mb-2">
+                Kedai Dimesem
+            </h1>
+            <p class="text-brown-600">Masuk ke akun Anda</p>
+            <p class="text-sm text-brown-500 mt-1">Selamat datang kembali!</p>
+        </div>
+
+        <!-- Form Login -->
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-brown-700 mb-1">
+                    <i class="fas fa-envelope mr-2 text-brown-500"></i>Alamat Email
+                </label>
+                <input type="email" id="email" name="email" required
+                    class="w-full px-4 py-3 border border-brown-300 rounded-lg form-input focus:border-brown-500 focus:ring-brown-500 transition duration-200"
+                    placeholder="nama@email.com">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-brown-700 mb-1">
+                    <i class="fas fa-lock mr-2 text-brown-500"></i>Kata Sandi
+                </label>
+                <div class="relative">
+                    <input type="password" id="password" name="password" required
+                        class="w-full px-4 py-3 border border-brown-300 rounded-lg form-input focus:border-brown-500 focus:ring-brown-500 transition duration-200 pr-10"
+                        placeholder="••••••••">
+                    <button type="button" id="togglePassword" class="absolute right-3 top-3 text-brown-500 hover:text-brown-700">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input type="checkbox" id="remember" class="h-4 w-4 text-brown-600 rounded border-brown-300 focus:ring-brown-500">
+                    <label for="remember" class="ml-2 text-sm text-brown-600">Ingat saya</label>
+                </div>
+                <a href="#" class="text-sm text-brown-600 hover:text-brown-700 hover:underline transition">
+                    Lupa password?
+                </a>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-brown-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-brown-700 transition duration-300 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
+                <i class="fas fa-sign-in-alt mr-2"></i>Masuk ke Akun
+            </button>
+
+            <div class="text-center mt-6 pt-6 border-t border-brown-200">
+                <p class="text-brown-600 text-sm mb-3">
+                    Belum punya akun? 
+                    <a href="register.html" class="text-brown-700 font-semibold hover:text-brown-800 hover:underline transition">
+                        Daftar disini
+                    </a>
+                </p>
+                <a href="dashboard.html" class="inline-flex items-center text-sm text-brown-500 hover:text-brown-700 transition">
+                    <i class="fas fa-store mr-2"></i>Lanjut sebagai tamu
+                </a>
+            </div>
+        </form>
+
+        <!-- Notifikasi -->
+        <div id="notification" class="hidden mt-4 p-4 rounded-lg border"></div>
+        
+
+
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const notification = document.getElementById('notification');
+            
+            // Reset notification
+            notification.classList.add('hidden');
+            
+            // Validasi sederhana
+            if (!email || !password) {
+                showNotification('Email dan password harus diisi', 'error');
+                return;
+            }
+            
+            // Validasi format email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Format email tidak valid', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memproses...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        email, 
+                        password,
+                        remember: document.getElementById('remember').checked 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showNotification('Login berhasil! Mengalihkan...', 'success');
+                    
+                    // Simpan data user di session storage
+                    if (data.user) {
+                        sessionStorage.setItem('user', JSON.stringify(data.user));
+                        
+                        // Jika remember me dicentang, simpan juga di localStorage
+                        if (document.getElementById('remember').checked && data.token) {
+                            localStorage.setItem('auth_token', data.token);
+                        }
+                    }
+                    
+                    // Redirect berdasarkan role
+                    setTimeout(() => {
+                        if (data.user && data.user.role === 'admin') {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'dashboard.html';
+                        }
+                    }, 1500);
+                } else {
+                    showNotification(data.error || 'Email atau password salah', 'error');
+                }
+            } catch (error) {
+                showNotification('Koneksi terputus. Periksa koneksi internet Anda.', 'error');
+                console.error('Login error:', error);
+            } finally {
+                // Restore button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            
+            // Set styles based on type
+            if (type === 'error') {
+                notification.className = 'mt-4 p-4 rounded-lg border bg-red-50 text-red-700 border-red-200';
+            } else {
+                notification.className = 'mt-4 p-4 rounded-lg border bg-green-50 text-green-700 border-green-200';
+            }
+            
+            notification.classList.remove('hidden');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 5000);
+        }
+        
+        // Check for saved credentials (remember me)
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedEmail = localStorage.getItem('saved_email');
+            const savedToken = localStorage.getItem('auth_token');
+            
+            if (savedEmail) {
+                document.getElementById('email').value = savedEmail;
+                document.getElementById('remember').checked = true;
+            }
+            
+            // Auto-fill untuk testing (hanya di localhost)
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                // Jika tidak ada email yang tersimpan, isi dengan demo credentials
+                if (!savedEmail) {
+                    document.getElementById('email').value = 'admin@kedai.com';
+                    document.getElementById('password').value = 'admin123';
+                    document.getElementById('remember').checked = true;
+                }
+            }
+            
+            // Jika ada token valid, redirect langsung
+            if (savedToken) {
+                // Verifikasi token di sini jika perlu
+                // Untuk sekarang, kita akan tetap di halaman login
+            }
+        });
+        
+        // Save email when remember me is checked
+        document.getElementById('email').addEventListener('blur', function() {
+            if (document.getElementById('remember').checked && this.value) {
+                localStorage.setItem('saved_email', this.value);
+            }
+        });
+        
+        document.getElementById('remember').addEventListener('change', function() {
+            if (!this.checked) {
+                localStorage.removeItem('saved_email');
+            } else if (document.getElementById('email').value) {
+                localStorage.setItem('saved_email', document.getElementById('email').value);
+            }
+        });
+    </script>
+</body>
+</html>
