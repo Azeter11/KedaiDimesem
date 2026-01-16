@@ -25,16 +25,19 @@ CREATE TABLE products (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Table: transactions
+-- Table: transactions (VERSI PERBAIKAN)
 CREATE TABLE transactions (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     transaction_code VARCHAR(50) UNIQUE NOT NULL,
     customer_name VARCHAR(100) NOT NULL,
+    customer_email VARCHAR(100) NOT NULL, -- Kolom baru
+    customer_phone VARCHAR(20) NOT NULL, -- Kolom baru
     customer_address TEXT NOT NULL,
+    customer_note TEXT,                   -- Kolom baru
     payment_method ENUM('transfer', 'cod') NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
-    status ENUM('pending', 'paid', 'cancelled') DEFAULT 'pending',
+    STATUS ENUM('pending', 'paid', 'cancelled', 'completed') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );

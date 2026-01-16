@@ -235,19 +235,34 @@
                                 </label>
                             </div>
                             
-                            <div class="flex items-center p-3 rounded-lg border border-brown-200 hover:border-brown-500 transition">
-                                <input type="radio" id="qris" name="paymentMethod" value="qris"
-                                       class="h-4 w-4 text-brown-600 focus:ring-brown-500">
-                                <label for="qris" class="ml-3 flex items-center cursor-pointer w-full">
-                                    <div class="bg-brown-100 p-2 rounded-lg mr-3">
-                                        <i class="fas fa-qrcode text-brown-600"></i>
-                                    </div>
-                                    <div>
-                                        <span class="font-medium text-brown-900">QRIS</span>
-                                        <p class="text-sm text-brown-600">Scan QR Code</p>
-                                    </div>
-                                </label>
-                            </div>
+<div class="flex flex-col p-3 rounded-lg border border-brown-200 hover:border-brown-500 transition">
+    <div class="flex items-center">
+        <input type="radio" id="qris" name="paymentMethod" value="qris"
+               class="h-4 w-4 text-brown-600 focus:ring-brown-500">
+        <label for="qris" class="ml-3 flex items-center cursor-pointer w-full">
+            <div class="bg-white border border-brown-100 p-1 rounded-lg mr-3 shadow-sm">
+                <img src="uploads/QRIS_DIMSUM.jpg" alt="QRIS Icon" class="w-10 h-10 object-cover rounded-md">
+            </div>
+            <div>
+                <span class="font-medium text-brown-900">QRIS (Otomatis)</span>
+                <p class="text-sm text-brown-600">Scan QR Code untuk bayar cepat</p>
+            </div>
+        </label>
+    </div>
+
+    <div id="qris-image-container" class="hidden mt-4 p-4 bg-amber-50 border-2 border-dashed border-brown-200 rounded-xl text-center animate-fade-in">
+        <p class="text-[10px] text-brown-500 mb-3 uppercase font-bold tracking-widest">Silakan Scan QRIS Dibawah Ini</p>
+        
+        <div class="bg-white p-3 inline-block rounded-lg shadow-inner mb-2">
+            <img src="uploads/QRIS_DIMSUM.jpg" alt="QRIS Kedai Dimesem" class="w-64 h-64 object-contain mx-auto">
+        </div>
+        
+        <div class="mt-2">
+            <p class="text-sm font-bold text-brown-900">KEDAI DIMESEM</p>
+            <p class="text-[11px] text-brown-600 italic">*Pastikan nominal sesuai dengan total tagihan</p>
+        </div>
+    </div>
+</div>
                         </div>
                         
                         <!-- Transfer Instructions -->
@@ -312,29 +327,34 @@
                         </div>
                         
                         <!-- QRIS Instructions -->
-                        <div id="qrisInstructions" class="mb-6 p-4 bg-brown-50 rounded-lg border border-brown-200 hidden">
-                            <h4 class="font-semibold mb-3 text-brown-900">
-                                <i class="fas fa-info-circle mr-2 text-brown-500"></i>Instruksi QRIS
-                            </h4>
-                            <div class="text-center">
-                                <div class="bg-white p-4 rounded-lg border border-brown-200 mb-4">
-                                    <div class="w-48 h-48 mx-auto bg-gray-200 rounded mb-3 flex items-center justify-center">
-                                        <i class="fas fa-qrcode text-4xl text-brown-400"></i>
-                                    </div>
-                                    <p class="text-sm text-brown-600">Scan kode QR di atas menggunakan aplikasi e-wallet atau mobile banking Anda</p>
-                                </div>
-                                <ul class="space-y-2 text-sm text-brown-700">
-                                    <li class="flex items-center">
-                                        <i class="fas fa-check text-green-500 mr-2"></i>
-                                        <span>Pembayaran instan dan otomatis</span>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <i class="fas fa-check text-green-500 mr-2"></i>
-                                        <span>Dukung berbagai aplikasi (GoPay, OVO, DANA, dll)</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+<div class="flex flex-col p-3 rounded-lg border border-brown-200 hover:border-brown-500 transition mb-3">
+    <div class="flex items-center">
+        <input type="radio" id="qris" name="paymentMethod" value="qris"
+               class="h-4 w-4 text-brown-600 focus:ring-brown-500">
+        <label for="qris" class="ml-3 flex items-center cursor-pointer w-full">
+            <div class="bg-white border border-brown-100 p-1 rounded-lg mr-3 shadow-sm">
+                <img src="uploads/QRIS_DIMSUM.jpg" alt="QRIS" class="w-10 h-10 object-cover rounded-md">
+            </div>
+            <div>
+                <span class="font-medium text-brown-900">QRIS</span>
+                <p class="text-sm text-brown-600">Scan QR Code Otomatis</p>
+            </div>
+        </label>
+    </div>
+
+    <div id="qrisInstructions" class="hidden mt-4 p-4 bg-amber-50 border-2 border-dashed border-brown-200 rounded-xl text-center">
+        <p class="text-[10px] text-brown-500 mb-3 uppercase font-bold tracking-widest">Silakan Scan QRIS Dibawah Ini</p>
+        
+        <div class="bg-white p-3 inline-block rounded-lg shadow-inner mb-2">
+            <img src="uploads/QRIS_DIMSUM.jpg" alt="QRIS Kedai Dimesem" class="w-64 h-64 object-contain mx-auto">
+        </div>
+        
+        <div class="mt-2">
+            <p class="text-sm font-bold text-brown-900">KEDAI DIMESEM</p>
+            <p class="text-[11px] text-brown-600 italic">*Pastikan nominal sesuai dengan total tagihan</p>
+        </div>
+    </div>
+</div>
                         
                         <!-- Terms -->
                         <div class="mb-6 p-4 bg-brown-50 rounded-lg border border-brown-200">
@@ -387,6 +407,9 @@
             </div>
         </div>
     </div>
+
+    <script src="payment.js"></script>
+    <script src="script.js"></script>
     
     <script>
         // Load cart items
@@ -403,24 +426,30 @@
                 document.getElementById('customerAddress').value = user.address || '';
             }
             
-            // Payment method toggle
-            document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    // Hide all instructions
-                    document.getElementById('transferInstructions').classList.add('hidden');
-                    document.getElementById('codInstructions').classList.add('hidden');
-                    document.getElementById('qrisInstructions').classList.add('hidden');
-                    
-                    // Show selected instructions
-                    if (this.value === 'transfer') {
-                        document.getElementById('transferInstructions').classList.remove('hidden');
-                    } else if (this.value === 'cod') {
-                        document.getElementById('codInstructions').classList.remove('hidden');
-                    } else if (this.value === 'qris') {
-                        document.getElementById('qrisInstructions').classList.remove('hidden');
-                    }
-                });
-            });
+// 3. SETUP PAYMENT METHOD TOGGLE (FIXED FOR QRIS)
+const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+paymentMethods.forEach(radio => {
+    radio.addEventListener('change', function() {
+        const transferInstructions = document.getElementById('transferInstructions');
+        const codInstructions = document.getElementById('codInstructions');
+        const qrisInstructions = document.getElementById('qrisInstructions'); // Pastikan ID ini ada di HTML
+
+        // Sembunyikan semua terlebih dahulu agar tidak tumpang tindih
+        if (transferInstructions) transferInstructions.classList.add('hidden');
+        if (codInstructions) codInstructions.classList.add('hidden');
+        if (qrisInstructions) qrisInstructions.classList.add('hidden');
+        
+        // Logika untuk menampilkan instruksi yang sesuai
+        if (this.value === 'transfer') {
+            if (transferInstructions) transferInstructions.classList.remove('hidden');
+        } else if (this.value === 'cod') {
+            if (codInstructions) codInstructions.classList.remove('hidden');
+        } else if (this.value === 'qris') {
+            // Ini yang membuat JPG QRIS Anda muncul
+            if (qrisInstructions) qrisInstructions.classList.remove('hidden');
+        }
+    });
+});
             
             // Initialize with transfer instructions
             document.getElementById('transferInstructions').classList.remove('hidden');

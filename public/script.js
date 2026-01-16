@@ -57,17 +57,42 @@ function getQueryParam(param) {
     return urlParams.get(param);
 }
 
-// Debounce function for search/input
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
+// Variable untuk debounce
+let searchTimer;
+
+const searchInput = document.getElementById('searchInput');
+
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimer);
+        const query = e.target.value;
+
+        searchTimer = setTimeout(() => {
+            fetchProducts(query);
+        }, 500); // Tunggu 0.5 detik setelah selesai mengetik
+    });
+}
+
+// Fungsi Fetch Products yang diperbaiki
+async function fetchProducts(searchQuery = '') {
+    try {
+        const url = searchQuery 
+            ? `/api/search?q=${encodeURIComponent(searchQuery)}` 
+            : '/api/products';
+            
+        const response = await fetch(url);
+        const products = await response.json();
+
+        // Perbaikan Error: pastikan 'products' adalah Array sebelum di .map()
+        if (Array.isArray(products)) {
+            displayProducts(products);
+        } else {
+            console.error('Data yang diterima bukan array:', products);
+            displayProducts([]); // Tampilkan kosong jika error
+        }
+    } catch (error) {
+        console.error('Fetch Error:', error);
+    }
 }
 
 // Check authentication status
@@ -84,6 +109,28 @@ function checkAuth() {
             resolve(null);
         });
     });
+}
+function displayProducts(products) {
+    const container = document.getElementById('product-container'); 
+    if (!container) return;
+
+    if (products.length === 0) {
+        container.innerHTML = `<p class="col-span-full text-center py-10 text-amber-800">Produk tidak ditemukan.</p>`;
+        return;
+    }
+
+    container.innerHTML = products.map(item => `
+        <div class="card-hover bg-white rounded-2xl shadow-md overflow-hidden border border-amber-100">
+            <img src="${item.image || '/assets/default-dimsum.jpg'}" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h3 class="text-lg font-bold text-amber-900">${item.name}</h3>
+                <p class="text-amber-600 font-bold mt-2">Rp ${Number(item.price).toLocaleString('id-ID')}</p>
+                <button onclick="addToCart(${item.id})" class="w-full mt-3 bg-amber-800 text-white py-2 rounded-xl hover:bg-amber-900 transition">
+                    Tambah
+                </button>
+            </div>
+        </div>
+    `).join('');
 }
 
 // Logout function

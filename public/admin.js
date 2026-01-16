@@ -80,7 +80,7 @@ async function loadTransactions() {
                               'bg-red-100 text-red-800';
             
             const statusText = transaction.status === 'paid' ? 'Lunas' :
-                             transaction.status === 'pending' ? 'Pending' : 'Batal';
+                             transaction.status === 'pending' ? 'Pending' : 'Berhasil';
             
             const methodText = transaction.payment_method === 'transfer' ? 'Transfer' : 'COD';
             
@@ -388,7 +388,7 @@ function showTransactionModal(transaction) {
                       'bg-red-100 text-red-800';
     
     const statusText = transaction.status === 'paid' ? 'Lunas' :
-                     transaction.status === 'pending' ? 'Pending' : 'Batal';
+                     transaction.status === 'pending' ? 'Pending' : 'Berhasil';
     
     const methodText = transaction.payment_method === 'transfer' ? 'Transfer' : 'COD';
     

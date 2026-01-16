@@ -44,7 +44,7 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '', // Sesuaikan dengan password MySQL Anda
-    database: 'kedai_dimesemi1',
+    database: 'kedai_dimesem11',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -310,6 +310,14 @@ app.post('/api/products', isAdmin, upload.single('image'), handleUploadError, as
     }
 });
 
+// Konfigurasi Database
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'kedai_dimesem' // Sesuaikan dengan nama DB di .sql Anda
+});
+
 // Update product (admin only)
 app.put('/api/products/:id', isAdmin, upload.single('image'), handleUploadError, async (req, res) => {
     try {
@@ -393,6 +401,41 @@ app.get('/api/make-me-admin', async (req, res) => {
         res.send("Status role di database dan session sudah menjadi admin. Silakan refresh dashboard.");
     } catch (e) {
         res.status(500).send(e.message);
+    }
+});
+
+// ==================== SEARCH ENDPOINT (PERBAIKAN) ====================
+// Endpoint Pencarian Produk Langsung ke Database
+app.get('/api/search', async (req, res) => {
+    try {
+        const keyword = req.query.q;
+
+        // Jika tidak ada kata kunci, kembalikan semua produk
+        if (!keyword || keyword.trim() === "") {
+            const allProducts = await query("SELECT * FROM products");
+            return res.json(allProducts);
+        }
+
+        // Menyiapkan pattern SQL LIKE (contoh: %siomay%)
+        const searchPattern = `%${keyword}%`;
+
+        // Eksekusi query ke database
+        // Sesuaikan nama tabel 'products' dan kolom 'name'/'category' dengan DB Anda
+        const results = await query(
+            "SELECT * FROM products WHERE name LIKE ? OR category LIKE ?",
+            [searchPattern, searchPattern]
+        );
+
+        // Selalu pastikan mengirimkan array kembali ke frontend
+        // Meskipun hasil kosong, kirimkan [] agar .map() tidak error
+        res.json(results || []);
+
+    } catch (error) {
+        console.error('Database Search Error:', error);
+        res.status(500).json({ 
+            error: "Gagal mengambil data dari database",
+            details: [] 
+        });
     }
 });
 
@@ -598,13 +641,15 @@ app.get('/api/transactions/recent', isAdmin, async (req, res) => {
 });
 
 // Get transaction by ID
+// Get transaction by ID
 app.get('/api/transactions/:id', async (req, res) => {
     try {
         const { id } = req.params;
         
-        // Get transaction
+        // Get transaction dengan info user (jika ada)
+        // t.* akan mengambil customer_email, customer_phone, customer_address, dll.
         const transactions = await query(`
-            SELECT t.*, u.name as user_name, u.email as user_email
+            SELECT t.*, u.name as user_account_name, u.email as user_account_email
             FROM transactions t
             LEFT JOIN users u ON t.user_id = u.id
             WHERE t.id = ?
@@ -616,10 +661,12 @@ app.get('/api/transactions/:id', async (req, res) => {
         
         const transaction = transactions[0];
         
-        // Get transaction items
+        // Get transaction items (Jangan lupa join dengan produk untuk ambil nama produknya)
         const items = await query(`
-            SELECT * FROM transaction_items 
-            WHERE transaction_id = ?
+            SELECT ti.*, p.name as product_name 
+            FROM transaction_items ti
+            LEFT JOIN products p ON ti.product_id = p.id
+            WHERE ti.transaction_id = ?
         `, [id]);
         
         transaction.items = items;
@@ -632,26 +679,35 @@ app.get('/api/transactions/:id', async (req, res) => {
 });
 
 // Update transaction status (admin only)
+// Update transaction status (admin only)
 app.put('/api/transactions/:id/status', isAdmin, async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
         
-        const validStatuses = ['pending', 'paid', 'cancelled'];
-        if (!validStatuses.includes(status)) {
+        // SESUAIKAN: Tambahkan 'completed' sesuai ENUM database baru
+        const validStatuses = ['pending', 'paid', 'cancelled', 'completed'];
+        
+        // Gunakan toLowerCase untuk memastikan kecocokan dengan ENUM database
+        const normalizedStatus = status ? status.toLowerCase() : '';
+
+        if (!validStatuses.includes(normalizedStatus)) {
             return res.status(400).json({ error: 'Status tidak valid' });
         }
         
         const result = await query(
             'UPDATE transactions SET status = ? WHERE id = ?',
-            [status, id]
+            [normalizedStatus, id]
         );
         
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Transaksi tidak ditemukan' });
         }
         
-        res.json({ success: true, message: 'Status transaksi berhasil diupdate' });
+        res.json({ 
+            success: true, 
+            message: `Status transaksi berhasil diupdate menjadi ${normalizedStatus}` 
+        });
         
     } catch (error) {
         console.error('Update transaction status error:', error);
@@ -774,12 +830,12 @@ app.get('/api/admin/recent-transactions', async (req, res) => {
 
 // ==================== PDF GENERATION ENDPOINT ====================
 
-// Generate PDF invoice
+// Generate PDF invoice yang lebih menarik
 app.get('/api/generate-pdf/:id', async (req, res) => {
     try {
         const { id } = req.params;
         
-        // Get transaction data
+        // 1. Ambil data transaksi
         const transactions = await query(`
             SELECT t.*, u.name as user_name, u.email as user_email
             FROM transactions t
@@ -792,98 +848,127 @@ app.get('/api/generate-pdf/:id', async (req, res) => {
         }
         
         const transaction = transactions[0];
+        const items = await query(`SELECT * FROM transaction_items WHERE transaction_id = ?`, [id]);
         
-        // Get transaction items
-        const items = await query(`
-            SELECT * FROM transaction_items 
-            WHERE transaction_id = ?
-        `, [id]);
-        
-        // Create PDF document
-        const doc = new PDFDocument({ margin: 50 });
-        
-        // Set response headers
+        // 2. Inisialisasi PDF
+        const doc = new PDFDocument({ margin: 50, size: 'A4' });
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=invoice-${transaction.transaction_code}.pdf`);
-        
-        // Pipe PDF to response
         doc.pipe(res);
+
+        // --- STYLING & COLORS ---
+        const primaryColor = '#4a2d00'; // Cokelat Tua Kedai Dimesem
+        const secondaryColor = '#8d6e63';
+        const accentColor = '#fcf8f3'; // Background krem muda
+
+        // --- HEADER BACKGROUND ---
+        doc.rect(0, 0, 600, 130).fill(primaryColor);
         
-        // Add content to PDF
-        // Header
-        doc.fontSize(20).text('KEDAI DIMESEM', { align: 'center' });
-        doc.moveDown(0.5);
-        doc.fontSize(12).text('Invoice', { align: 'center' });
-        doc.moveDown();
+        // --- LOGO / TITLE ---
+        doc.fillColor('#ffffff')
+           .font('Helvetica-Bold')
+           .fontSize(25)
+           .text('KEDAI DIMESEM', 50, 45);
         
-        // Transaction info
-        doc.fontSize(10);
-        doc.text(`Invoice Number: ${transaction.transaction_code}`);
-        doc.text(`Date: ${new Date(transaction.created_at).toLocaleDateString('id-ID')}`);
-        doc.text(`Customer: ${transaction.customer_name}`);
-        doc.text(`Email: ${transaction.customer_email || '-'}`);
-        doc.text(`Phone: ${transaction.customer_phone || '-'}`);
-        doc.text(`Address: ${transaction.customer_address}`);
-        doc.moveDown();
+        doc.fontSize(10)
+           .font('Helvetica')
+           .text('Dimsum Lezat & Berkualitas Terbaik', 50, 75, { opacity: 0.8 });
+
+        // --- INVOICE LABEL ---
+        doc.fontSize(30)
+           .font('Helvetica-Bold')
+           .text('INVOICE', 350, 45, { align: 'right', width: 200 });
         
-        // Items table header
-        const tableTop = doc.y;
-        doc.font('Helvetica-Bold');
-        doc.text('Item', 50, tableTop);
-        doc.text('Price', 250, tableTop, { width: 80, align: 'right' });
-        doc.text('Qty', 330, tableTop, { width: 50, align: 'right' });
-        doc.text('Total', 380, tableTop, { width: 80, align: 'right' });
+        doc.fontSize(10)
+           .font('Helvetica')
+           .text(`#${transaction.transaction_code}`, 350, 80, { align: 'right', width: 200 });
+
+        // --- CUSTOMER & ORDER INFO ---
+        doc.fillColor('#444444').font('Helvetica');
+        let infoTop = 150;
+
+        // Kolom Kiri: Customer
+        doc.fontSize(10).fillColor(secondaryColor).font('Helvetica-Bold').text('DITAGIHKAN KEPADA:', 50, infoTop);
+        doc.fillColor('#000000').font('Helvetica-Bold').fontSize(12).text(transaction.customer_name.toUpperCase(), 50, infoTop + 15);
+        doc.font('Helvetica').fontSize(10).fillColor('#444444')
+           .text(transaction.customer_email || '-', 50, infoTop + 32)
+           .text(transaction.customer_phone || '-', 50, infoTop + 45)
+           .text(transaction.customer_address, 50, infoTop + 58, { width: 200 });
+
+        // Kolom Kanan: Detail Transaksi
+        doc.fontSize(10).fillColor(secondaryColor).font('Helvetica-Bold').text('DETAIL TRANSAKSI:', 350, infoTop);
+        doc.fillColor('#444444').font('Helvetica');
+        doc.text(`Tanggal Periksa:`, 350, infoTop + 15);
+        doc.text(`${new Date(transaction.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`, 450, infoTop + 15, { align: 'right' });
         
-        // Draw line
-        doc.moveTo(50, tableTop + 15).lineTo(530, tableTop + 15).stroke();
+        doc.text(`Metode Bayar:`, 350, infoTop + 30);
+        doc.text(`${transaction.payment_method.toUpperCase()}`, 450, infoTop + 30, { align: 'right' });
         
-        // Items
-        let y = tableTop + 25;
-        doc.font('Helvetica');
+        doc.text(`Status:`, 350, infoTop + 45);
+        const statusColor = transaction.status === 'paid' ? '#2e7d32' : '#ed6c02';
+        doc.fillColor(statusColor).font('Helvetica-Bold').text(`${transaction.status === 'paid' ? 'LUNAS' : 'PENDING'}`, 450, infoTop + 45, { align: 'right' });
+
+        // --- TABLE ITEMS ---
+        let tableTop = 260;
+        doc.rect(50, tableTop, 500, 25).fill(primaryColor); // Header Tabel
         
+        doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(10);
+        doc.text('PRODUK', 60, tableTop + 7);
+        doc.text('HARGA', 250, tableTop + 7, { width: 100, align: 'right' });
+        doc.text('QTY', 360, tableTop + 7, { width: 50, align: 'center' });
+        doc.text('TOTAL', 450, tableTop + 7, { width: 90, align: 'right' });
+
+        let itemY = tableTop + 35;
+        doc.fillColor('#000000').font('Helvetica');
+
         items.forEach((item, i) => {
-            if (y > 700) {
-                doc.addPage();
-                y = 50;
+            // Beri warna zebra selang seling
+            if (i % 2 !== 0) {
+                doc.rect(50, itemY - 5, 500, 20).fill(accentColor);
             }
             
-            doc.text(item.product_name, 50, y, { width: 200 });
-            doc.text(`Rp ${item.price.toLocaleString('id-ID')}`, 250, y, { width: 80, align: 'right' });
-            doc.text(item.quantity.toString(), 330, y, { width: 50, align: 'right' });
-            doc.text(`Rp ${item.subtotal.toLocaleString('id-ID')}`, 380, y, { width: 80, align: 'right' });
+            doc.fillColor('#000000');
+            doc.text(item.product_name, 60, itemY);
+            doc.text(`Rp ${item.price.toLocaleString('id-ID')}`, 250, itemY, { width: 100, align: 'right' });
+            doc.text(item.quantity.toString(), 360, itemY, { width: 50, align: 'center' });
+            doc.text(`Rp ${item.subtotal.toLocaleString('id-ID')}`, 450, itemY, { width: 90, align: 'right' });
             
-            y += 20;
+            itemY += 22;
         });
+
+        // --- SUMMARY ---
+        doc.moveTo(50, itemY).lineTo(550, itemY).strokeColor('#eeeeee').stroke();
+        itemY += 15;
+
+        const subtotal = transaction.total_amount - 10000;
         
-        // Draw line
-        doc.moveTo(50, y).lineTo(530, y).stroke();
-        y += 10;
+        // Subtotal
+        doc.fontSize(10).fillColor('#666666').text('Subtotal', 350, itemY);
+        doc.fillColor('#000000').text(`Rp ${subtotal.toLocaleString('id-ID')}`, 450, itemY, { align: 'right' });
         
-        // Totals
-        doc.font('Helvetica-Bold');
-        doc.text('Subtotal:', 380, y, { width: 80, align: 'right' });
-        doc.text(`Rp ${(transaction.total_amount - 10000).toLocaleString('id-ID')}`, 460, y, { width: 70, align: 'right' });
+        // Ongkir
+        itemY += 18;
+        doc.fillColor('#666666').text('Biaya Pengiriman', 350, itemY);
+        doc.fillColor('#000000').text(`Rp 10.000`, 450, itemY, { align: 'right' });
+
+        // Total
+        itemY += 25;
+        doc.rect(340, itemY - 10, 210, 30).fill(accentColor);
+        doc.fontSize(12).fillColor(primaryColor).font('Helvetica-Bold').text('TOTAL AKHIR', 350, itemY);
+        doc.text(`Rp ${transaction.total_amount.toLocaleString('id-ID')}`, 450, itemY, { align: 'right' });
+
+        // --- FOOTER ---
+        const footerY = 750;
+        doc.rect(0, 810, 600, 40).fill(primaryColor);
         
-        y += 20;
-        doc.text('Shipping:', 380, y, { width: 80, align: 'right' });
-        doc.text('Rp 10,000', 460, y, { width: 70, align: 'right' });
+        doc.fillColor('#444444').font('Helvetica').fontSize(9)
+           .text('Terima kasih telah memesan di Kedai Dimesem!', 50, footerY, { align: 'center', width: 500 });
+        doc.text('Simpan invoice ini sebagai bukti pembayaran yang sah.', 50, footerY + 12, { align: 'center', width: 500 });
         
-        y += 20;
-        doc.text('Total:', 380, y, { width: 80, align: 'right' });
-        doc.text(`Rp ${transaction.total_amount.toLocaleString('id-ID')}`, 460, y, { width: 70, align: 'right' });
-        
-        y += 30;
-        doc.font('Helvetica');
-        doc.text(`Payment Method: ${transaction.payment_method === 'transfer' ? 'Transfer Bank' : 'COD'}`, 50, y);
-        doc.text(`Status: ${transaction.status === 'paid' ? 'Paid' : 'Pending'}`, 50, y + 15);
-        
-        // Footer
-        doc.fontSize(8).text(
-            'Terima kasih telah berbelanja di Kedai Dimesem. Untuk pertanyaan, hubungi: (021) 1234-5678',
-            50, 750, { align: 'center', width: 500 }
-        );
-        
-        // Finalize PDF
+        doc.fillColor('#ffffff').fontSize(8)
+           .text('www.kedaidimesem.com | Hubungi Kami: 0878-XXXX-XXXX', 50, 825, { align: 'center', width: 500 });
+
+        // Finalisasi
         doc.end();
         
     } catch (error) {
@@ -899,7 +984,7 @@ app.get('/api/admin/generate-report', async (req, res) => {
         let querySql = "";
         let dateFilter = "";
 
-        // 1. Logika Filter Periode (Sesuai value di HTML Anda)
+        // 1. Logika Filter Periode
         if (period === 'today') {
             dateFilter = "AND DATE(t.created_at) = CURDATE()";
         } else if (period === 'week') {
@@ -910,45 +995,92 @@ app.get('/api/admin/generate-report', async (req, res) => {
             dateFilter = "AND YEAR(t.created_at) = YEAR(CURDATE())";
         }
 
-        // 2. Logika Jenis Laporan (Sesuai value di HTML Anda)
+        // 2. Logika Jenis Laporan
         if (type === 'transactions') {
-            querySql = `SELECT t.*, u.name as user_name FROM transactions t 
-                        LEFT JOIN users u ON t.user_id = u.id 
-                        WHERE 1=1 ${dateFilter} ORDER BY t.created_at DESC`;
+            querySql = `SELECT t.* FROM transactions t WHERE 1=1 ${dateFilter} ORDER BY t.created_at DESC`;
         } else if (type === 'sales') {
-            querySql = `SELECT ti.*, t.transaction_code, t.created_at FROM transaction_items ti 
+            querySql = `SELECT ti.*, t.transaction_code, t.created_at, p.name as product_name 
+                        FROM transaction_items ti 
                         JOIN transactions t ON ti.transaction_id = t.id 
+                        LEFT JOIN products p ON ti.product_id = p.id
                         WHERE t.status = 'paid' ${dateFilter} ORDER BY t.created_at DESC`;
         } else if (type === 'products') {
             querySql = "SELECT * FROM products ORDER BY category ASC";
         }
 
-        // 3. Validasi Akhir untuk mencegah ER_EMPTY_QUERY
-        if (!querySql) {
-            return res.status(400).json({ error: `Tipe '${type}' tidak dikenali server` });
-        }
+        if (!querySql) return res.status(400).json({ error: "Tipe tidak dikenali" });
 
         const data = await query(querySql);
-        
-        if (data.length === 0) {
-            return res.status(404).send("Data tidak ditemukan untuk periode tersebut.");
-        }
+        if (data.length === 0) return res.status(404).send("Data tidak ditemukan.");
 
-        // --- Proses PDF (Gunakan PDFDocument) ---
-        const doc = new PDFDocument();
+        // --- PROSES PDF ---
+        const doc = new PDFDocument({ margin: 50 });
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=laporan-${type}.pdf`);
         doc.pipe(res);
-        
-        doc.fontSize(18).text(`LAPORAN ${type.toUpperCase()}`, { align: 'center' });
-        doc.fontSize(12).text(`Periode: ${period}`, { align: 'center' });
-        doc.moveDown();
 
+        // HEADER: Kotak Berwarna
+        doc.rect(0, 0, 612, 100).fill('#4b3621'); // Warna Coklat Gelap
+        doc.fillColor('#ffffff').fontSize(20).text('DIMSUM KITCHEN - LAPORAN', 50, 40);
+        doc.fontSize(10).text(`Jenis: ${type.toUpperCase()} | Periode: ${period.toUpperCase()}`, 50, 65);
+        doc.text(`Dicetak pada: ${new Date().toLocaleString('id-ID')}`, 50, 80);
+
+        doc.moveDown(4);
+        doc.fillColor('#333333');
+
+        // TABEL LOGIC
+        const tableTop = 150;
+        const itemCodeX = 50;
+        const nameX = 150;
+        const dateX = 350;
+        const amountX = 450;
+
+        // Tabel Header
+        doc.fontSize(10).font('Helvetica-Bold');
+        doc.text('KODE/ID', itemCodeX, tableTop);
+        doc.text('KETERANGAN', nameX, tableTop);
+        doc.text('TANGGAL', dateX, tableTop);
+        doc.text('TOTAL', amountX, tableTop, { align: 'right' });
+
+        doc.moveTo(50, tableTop + 15).lineTo(550, tableTop + 15).strokeColor('#aaaaaa').stroke();
+
+        // Tabel Rows
+        let currentY = tableTop + 25;
+        let grandTotal = 0;
+
+        doc.font('Helvetica');
         data.forEach((item, i) => {
-            const label = item.transaction_code || item.name;
-            const amount = item.total_amount || item.price;
-            doc.text(`${i + 1}. ${label} - Rp ${amount.toLocaleString('id-ID')}`);
+            const label = item.transaction_code || `PRD-${item.id}`;
+            const desc = item.customer_name || item.product_name || item.name;
+            const date = item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : '-';
+            const amount = parseFloat(item.total_amount || item.price || 0);
+            grandTotal += amount;
+
+            // Zebra Striping (Baris selang-seling abu-abu)
+            if (i % 2 === 0) {
+                doc.rect(50, currentY - 5, 500, 20).fill('#f9f9f9').fillColor('#333333');
+            }
+
+            doc.text(label, itemCodeX, currentY);
+            doc.text(desc.substring(0, 30), nameX, currentY);
+            doc.text(date, dateX, currentY);
+            doc.text(`Rp ${amount.toLocaleString('id-ID')}`, amountX, currentY, { align: 'right' });
+
+            currentY += 20;
+
+            // Jika halaman penuh, tambah halaman baru
+            if (currentY > 700) {
+                doc.addPage();
+                currentY = 50;
+            }
         });
+
+        // FOOTER: Total Keseluruhan
+        doc.moveDown();
+        doc.moveTo(50, currentY).lineTo(550, currentY).stroke();
+        doc.fontSize(12).font('Helvetica-Bold');
+        doc.text('GRAND TOTAL:', nameX, currentY + 10);
+        doc.fillColor('#4b3621').text(`Rp ${grandTotal.toLocaleString('id-ID')}`, amountX, currentY + 10, { align: 'right' });
 
         doc.end();
 
